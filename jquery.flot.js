@@ -1,3 +1,29 @@
+/* Modifications (made by Trung Huynh & Henrik Pettersson)
+ *
+ * ============================Issue 512========================================
+ * Wrong condition at checking existing overlay canvas
+ * URL: http://code.google.com/p/flot/issues/detail?id=512
+ * ==Original==:
+ * if (existingCanvas.length == 0 || existingOverlay == 0) {
+ * ==Change==:
+ * if (existingCanvas.length == 0 || existingOverlay.length == 0) {
+ *
+ *
+ * ============================Issue 191========================================
+ * Added collision checking on x axis labels
+ * URL: http://code.google.com/p/flot/issues/detail?id=191
+ *
+ * ============================General==========================================
+ * Modified snapRangeToTicks to extend the yAxis range to the closest tick.
+ *
+ * Modified makeCanvas to set z-index on overlay canvas (for crosshair plugin).
+ *
+ * Modified allocateAxisBoxFirstPhase to add space for the labels when in
+ * canvasText mode.
+ */
+
+ 
+
 /*! Javascript plotting library for jQuery, v. 0.7.
  *
  * Released under the MIT license by IOLA, December 2007.
@@ -8,9 +34,9 @@
 // for convenience
 
 /* Plugin for jQuery for working with colors.
- * 
+ *
  * Version 1.1.
- * 
+ *
  * Inspiration from jQuery color animation plugin by John Resig.
  *
  * Released under the MIT license by Ole Laursen, October 2009.
@@ -27,7 +53,7 @@
  *
  * V. 1.1: Fix error handling so e.g. parsing an empty string does
  * produce a color rather than just crashing.
- */ 
+ */
 (function(B){B.color={};B.color.make=function(F,E,C,D){var G={};G.r=F||0;G.g=E||0;G.b=C||0;G.a=D!=null?D:1;G.add=function(J,I){for(var H=0;H<J.length;++H){G[J.charAt(H)]+=I}return G.normalize()};G.scale=function(J,I){for(var H=0;H<J.length;++H){G[J.charAt(H)]*=I}return G.normalize()};G.toString=function(){if(G.a>=1){return"rgb("+[G.r,G.g,G.b].join(",")+")"}else{return"rgba("+[G.r,G.g,G.b,G.a].join(",")+")"}};G.normalize=function(){function H(J,K,I){return K<J?J:(K>I?I:K)}G.r=H(0,parseInt(G.r),255);G.g=H(0,parseInt(G.g),255);G.b=H(0,parseInt(G.b),255);G.a=H(0,G.a,1);return G};G.clone=function(){return B.color.make(G.r,G.b,G.g,G.a)};return G.normalize()};B.color.extract=function(D,C){var E;do{E=D.css(C).toLowerCase();if(E!=""&&E!="transparent"){break}D=D.parent()}while(!B.nodeName(D.get(0),"body"));if(E=="rgba(0, 0, 0, 0)"){E="transparent"}return B.color.parse(E)};B.color.parse=function(F){var E,C=B.color.make;if(E=/rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(F)){return C(parseInt(E[1],10),parseInt(E[2],10),parseInt(E[3],10))}if(E=/rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(F)){return C(parseInt(E[1],10),parseInt(E[2],10),parseInt(E[3],10),parseFloat(E[4]))}if(E=/rgb\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*\)/.exec(F)){return C(parseFloat(E[1])*2.55,parseFloat(E[2])*2.55,parseFloat(E[3])*2.55)}if(E=/rgba\(\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\%\s*,\s*([0-9]+(?:\.[0-9]+)?)\s*\)/.exec(F)){return C(parseFloat(E[1])*2.55,parseFloat(E[2])*2.55,parseFloat(E[3])*2.55,parseFloat(E[4]))}if(E=/#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(F)){return C(parseInt(E[1],16),parseInt(E[2],16),parseInt(E[3],16))}if(E=/#([a-fA-F0-9])([a-fA-F0-9])([a-fA-F0-9])/.exec(F)){return C(parseInt(E[1]+E[1],16),parseInt(E[2]+E[2],16),parseInt(E[3]+E[3],16))}var D=B.trim(F).toLowerCase();if(D=="transparent"){return C(255,255,255,0)}else{E=A[D]||[0,0,0];return C(E[0],E[1],E[2])}};var A={aqua:[0,255,255],azure:[240,255,255],beige:[245,245,220],black:[0,0,0],blue:[0,0,255],brown:[165,42,42],cyan:[0,255,255],darkblue:[0,0,139],darkcyan:[0,139,139],darkgrey:[169,169,169],darkgreen:[0,100,0],darkkhaki:[189,183,107],darkmagenta:[139,0,139],darkolivegreen:[85,107,47],darkorange:[255,140,0],darkorchid:[153,50,204],darkred:[139,0,0],darksalmon:[233,150,122],darkviolet:[148,0,211],fuchsia:[255,0,255],gold:[255,215,0],green:[0,128,0],indigo:[75,0,130],khaki:[240,230,140],lightblue:[173,216,230],lightcyan:[224,255,255],lightgreen:[144,238,144],lightgrey:[211,211,211],lightpink:[255,182,193],lightyellow:[255,255,224],lime:[0,255,0],magenta:[255,0,255],maroon:[128,0,0],navy:[0,0,128],olive:[128,128,0],orange:[255,165,0],pink:[255,192,203],purple:[128,0,128],violet:[128,0,128],red:[255,0,0],silver:[192,192,192],white:[255,255,255],yellow:[255,255,0]}})(jQuery);
 
 // the actual Flot code
@@ -97,7 +123,7 @@
                     },
                     lines: {
                         // we don't put in show: false so we can see
-                        // whether lines were actively disabled 
+                        // whether lines were actively disabled
                         lineWidth: 2, // in pixels
                         fill: false,
                         fillColor: null,
@@ -109,7 +135,7 @@
                         barWidth: 1, // in units of the x axis
                         fill: true,
                         fillColor: null,
-                        align: "left", // or "center" 
+                        align: "left", // or "center"
                         horizontal: false
                     },
                     shadowSize: 3
@@ -142,6 +168,7 @@
         ctx = null, octx = null,
         xaxes = [], yaxes = [],
         plotOffset = { left: 0, right: 0, top: 0, bottom: 0},
+        devicePixelRatio = window.devicePixelRatio || 1,
         canvasWidth = 0, canvasHeight = 0,
         plotWidth = 0, plotHeight = 0,
         hooks = {
@@ -187,11 +214,12 @@
         plot.getOptions = function () { return options; };
         plot.highlight = highlight;
         plot.unhighlight = unhighlight;
+        plot.forceRedrawOverlay = forceRedrawOverlay;
         plot.triggerRedrawOverlay = triggerRedrawOverlay;
         plot.pointOffset = function(point) {
             return {
-                left: parseInt(xaxes[axisNumber(point, "x") - 1].p2c(+point.x) + plotOffset.left),
-                top: parseInt(yaxes[axisNumber(point, "y") - 1].p2c(+point.y) + plotOffset.top)
+                left: parseInt(xaxes[axisNumber(point, "x") - 1].p2c(+point.x) + plotOffset.left, 10),
+                top: parseInt(yaxes[axisNumber(point, "y") - 1].p2c(+point.y) + plotOffset.top, 10)
             };
         };
         plot.shutdown = shutdown;
@@ -684,18 +712,28 @@
         }
 
         function makeCanvas(skipPositioning, cls) {
-            var c = document.createElement('canvas');
+            var c = document.createElement('canvas'),
+                $c = $(c);
+
             c.className = cls;
-            c.width = canvasWidth;
-            c.height = canvasHeight;
+
+            var width = $(placeholder).width();
+            var height = $(placeholder).height();
+
+            $c.attr('width', width * devicePixelRatio);
+            $c.attr('height', height * devicePixelRatio);
+            $c.css('width', width);
+            $c.css('height', height);
                     
             if (!skipPositioning)
                 $(c).css({ position: 'absolute', left: 0, top: 0 });
                 
-            $(c).appendTo(placeholder);
-                
+            $c.appendTo(placeholder);
+            
             if (!c.getContext) // excanvas hack
                 c = window.G_vmlCanvasManager.initElement(c);
+
+            c.getContext("2d").scale(devicePixelRatio, devicePixelRatio);
 
             // used for resetting in case we get replotted
             c.getContext("2d").save();
@@ -712,18 +750,30 @@
         }
 
         function resizeCanvas(c) {
+            var $c = $(c),
+                width = $(placeholder).width(),
+                height = $(placeholder).height();
+
             // resizing should reset the state (excanvas seems to be
             // buggy though)
-            if (c.width != canvasWidth)
-                c.width = canvasWidth;
+            if (c.width != width * devicePixelRatio) {
+                $c.attr('width', width * devicePixelRatio);
+                $c.css('width', width);
+            }
 
-            if (c.height != canvasHeight)
-                c.height = canvasHeight;
+            if (c.height != height * devicePixelRatio) {
+                $c.attr('height', height * devicePixelRatio);
+                $c.css('height', height);
+            }
 
             // so try to get back to the initial state (even if it's
             // gone now, this should be safe according to the spec)
             var cctx = c.getContext("2d");
             cctx.restore();
+
+            if (c.width != width * devicePixelRatio) {
+                cctx.scale(devicePixelRatio, devicePixelRatio);
+            }
 
             // and save again
             cctx.save();
@@ -733,8 +783,8 @@
             var reused,
                 existingCanvas = placeholder.children("canvas.base"),
                 existingOverlay = placeholder.children("canvas.overlay");
-
-            if (existingCanvas.length == 0 || existingOverlay == 0) {
+            
+            if (existingCanvas.length == 0 || existingOverlay.length == 0) {
                 // init everything
                 
                 placeholder.html(""); // make sure placeholder is clear
@@ -748,6 +798,8 @@
                 
                 canvas = makeCanvas(true, "base");
                 overlay = makeCanvas(false, "overlay"); // overlay canvas for interactive features
+
+                $(overlay).css({ zIndex: 10 }); // Make sure overlay is always on top (Henrik, 2012/07/18)
 
                 reused = false;
             }
@@ -848,38 +900,51 @@
                 l, w = opts.labelWidth, h = opts.labelHeight, dummyDiv;
 
             function makeDummyDiv(labels, width) {
-                return $('<div style="position:absolute;top:-10000px;' + width + 'font-size:smaller">' +
+                return $('<div style="position:absolute;top:-10000px;' + width + '">' +
                          '<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis">'
                          + labels.join("") + '</div></div>')
                     .appendTo(placeholder);
             }
             
             if (axis.direction == "x") {
+                labels = [];
+                for (i = 0; i < ticks.length; ++i) {
+                    l = ticks[i].label;
+                    if (l)
+                        labels.push('<div class="tickLabel" style="float:left;width:' + w + 'px">' + l + '</div>');
+                }
+
+                if (labels.length > 0) {
+                    // stick them all in the same div and measure
+                    // collective height
+                    labels.push('<div style="clear:left"></div>');
+                    dummyDiv = makeDummyDiv(labels, "width:10000px;");
+                }
+                
                 // to avoid measuring the widths of the labels (it's slow), we
                 // construct fixed-size boxes and put the labels inside
                 // them, we don't need the exact figures and the
                 // fixed-size box content is easy to center
-                if (w == null)
+                if (w == null) 
                     w = Math.floor(canvasWidth / (ticks.length > 0 ? ticks.length : 1));
-
+                
+                // if overlap option is true we need to find the widest label
+                // and use that as the label width
+                if (axis.options.labelPreventOverlap) {
+                    $(dummyDiv).find('.tickLabel').each(function () {
+                        if ($(this).outerWidth() > w) {
+                            w = $(this).outerWidth() + 1;
+                        }
+                    });
+                                        
+                }
+                
                 // measure x label heights
                 if (h == null) {
-                    labels = [];
-                    for (i = 0; i < ticks.length; ++i) {
-                        l = ticks[i].label;
-                        if (l)
-                            labels.push('<div class="tickLabel" style="float:left;width:' + w + 'px">' + l + '</div>');
-                    }
-
-                    if (labels.length > 0) {
-                        // stick them all in the same div and measure
-                        // collective height
-                        labels.push('<div style="clear:left"></div>');
-                        dummyDiv = makeDummyDiv(labels, "width:10000px;");
-                        h = dummyDiv.height();
-                        dummyDiv.remove();
-                    }
+                    h = dummyDiv.height();
                 }
+                
+                dummyDiv.remove();
             }
             else if (w == null || h == null) {
                 // calculate y label dimensions
@@ -949,7 +1014,13 @@
                 lh += padding;
                 
                 if (pos == "bottom") {
-                    plotOffset.bottom += lh + axismargin;
+	                // X-padding is added to make space for the rails added by the annotation plugin.
+                    // Should only be necessary when canvasText plugin is enabled.
+                    var xpadding = 0;
+                    if (options.grid.canvasText.show) {
+                        xpadding = (options.series.annotate.size.canvas + 1) * plot.rails;
+                    }
+                    plotOffset.bottom += lh + axismargin + xpadding;
                     axis.box = { top: canvasHeight - plotOffset.bottom, height: lh };
                 }
                 else {
@@ -1401,13 +1472,19 @@
         }
 
         function snapRangeToTicks(axis, ticks) {
-            if (axis.options.autoscaleMargin && ticks.length > 0) {
+            if (ticks.length > 0) {
+                //axis.min = Math.min(axis.min, ticks[0].v);
+                axis.max = Math.max(axis.max, ticks[ticks.length - 1].v);
+            }
+            
+            // Below is the original implementation
+            /*if (axis.options.autoscaleMargin && ticks.length > 0) {
                 // snap to ticks
                 if (axis.options.min == null)
                     axis.min = Math.min(axis.min, ticks[0].v);
                 if (axis.options.max == null && ticks.length > 1)
                     axis.max = Math.max(axis.max, ticks[ticks.length - 1].v);
-            }
+            }*/
         }
       
         function draw() {
@@ -1557,7 +1634,7 @@
                 var axis = axes[j], box = axis.box,
                     t = axis.tickLength, x, y, xoff, yoff;
                 if (!axis.show || axis.ticks.length == 0)
-                    continue
+                    continue;
                 
                 ctx.strokeStyle = axis.options.tickColor || $.color.parse(axis.options.color).scale('a', 0.22).toString();
                 ctx.lineWidth = 1;
@@ -1660,6 +1737,10 @@
                 var axis = axes[j], box = axis.box;
                 if (!axis.show)
                     continue;
+                
+                if (axis.options.labelPreventOverlap)
+                    axis = distributeLabels(axis);
+                
                 //debug: html.push('<div style="position:absolute;opacity:0.10;background-color:red;left:' + box.left + 'px;top:' + box.top + 'px;width:' + box.width +  'px;height:' + box.height + 'px"></div>')
                 html.push('<div class="' + axis.direction + 'Axis ' + axis.direction + axis.n + 'Axis" style="color:' + axis.options.color + '">');
                 for (var i = 0; i < axis.ticks.length; ++i) {
@@ -1705,6 +1786,38 @@
             placeholder.append(html.join(""));
         }
 
+        function distributeLabels (axis) {
+            // Calculate maximum number of labels
+            var maxLabels = Math.floor((plotWidth - plotOffset.left) / axis.labelWidth) + 1;
+                        
+            // Find eligible labels
+            var labels = [];
+            for (var i = 0; i < axis.ticks.length; i++) {
+                var tick = axis.ticks[i];
+                    if (tick.label && tick.v >= axis.min && tick.v <= axis.max) {
+                        labels.push(tick);
+                    }
+            }
+            
+            // Calculate the Nth label that needs to remain
+            var n = 1;
+            while ((labels.length / n) > maxLabels) {
+                n++;
+            }
+            
+            if (n > 1) {
+                for (var j = 0; j < labels.length; j++) {
+                    if (j > 0 && j % n !== 0) {
+                        labels[j].label = '';
+                    }
+                }
+            }
+               
+            axis.ticks = labels;
+            
+            return axis;
+        }        
+        
         function drawSeries(series) {
             if (series.lines.show)
                 drawSeriesLines(series);
@@ -2394,6 +2507,10 @@
                 redrawTimeout = setTimeout(drawOverlay, 30);
         }
 
+        function forceRedrawOverlay() {
+            drawOverlay();
+        }
+
         function drawOverlay() {
             redrawTimeout = null;
 
@@ -2594,6 +2711,6 @@
     // round to nearby lower multiple of base
     function floorInBase(n, base) {
         return base * Math.floor(n / base);
-    }
+    };
     
 })(jQuery);
